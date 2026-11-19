@@ -114,5 +114,19 @@
     </footer>
 
   <script src="app.ts"></script>
+  <script src="app.js"></script>
+  
+<script type="text/typescript">
+    interface Task {
+        id: number;
+        title: string;
+        completed: boolean;
+    }
+
+    interface TaskCuPrioritate extends Task {
+        priority: 'low' | 'medium' | 'high';
+    }
+</script>
+
 </body>
 </html>
