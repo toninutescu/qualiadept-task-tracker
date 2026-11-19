@@ -39,29 +39,26 @@
                        data-testid="input-due-date">
 
                 <button type="submit"
+                        id="submit-task-btn"
                         data-testid="submit-task-btn"
                         disabled>
                     Salveaza Task
                 </button>
-            </form>
+              <small id="error-msg"
+       class="error-text"
+       style="display: none;"
+       data-testid="error-message">
+    Numele task-ului nu poate fi gol!
+</small>
+      </form>
         </section>
 
         <section class="task-list-section">
             <h2>Task-uri Active</h2>
 
-            <ul id="active-tasks-list">
-                <li class="task-item"
-                    data-task-status="pending">
-                    <input type="checkbox"
-                           class="complete-checkbox"
-                           data-testid="check-task-1">
-                    <span>Invata arhitectura DOM</span>
-                    <button class="delete-btn"
-                            data-testid="delete-task-1">
-                        Sterge
-                    </button>
-                </li>
-            </ul>
+            <div id="loading-spinner" class="spinner">Se încarcă datele de la server...</div>
+      <ul id="task-list" class="task-list" data-testid="task-list">
+                     </ul>
         </section>
 
         <section class="task-history-section">
