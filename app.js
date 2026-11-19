@@ -1,24 +1,8 @@
+
 // ============================================================
-// Sesiunea 3: JavaScript Basics (Business Logic & Validare)
-// ============================================================
-// Cerințe Tehnice (Acceptance Criteria):
-// 1. Array de Obiecte: Declară constanta listaTaskuri cu cele 2 task-uri inițiale (id, nume, completat).
-// 2. Funcție Săgeată (Arrow Function): proceseazaTaskNou(taskObj) cu validare strictă if/else.
-//    - Dacă numele lipsește ("") sau este undefined: afișează mesaj de eroare în consolă.
-//    - Dacă datele sunt valide: adaugă noul task în array (push) și afișează mesaj de succes.
-// 3. Buclă de Raportare: Parcurge listaTaskuri cu o buclă for și afișează numele fiecărui task.
+// SESIUNEA 3 - JavaScript Basics
 // ============================================================
 
-// 1. Baza temporară de date (Array de Obiecte)
-
-
-// 2. Funcția de Validare (Arrow Function)
-
-
-// 3. Testează funcția apelând-o cu un task invalid și unul valid
-
-
-// 4. Bucla for pentru raportarea task-urilor din memorie
 const listaTaskuri = [
     {
         id: 1001,
@@ -51,106 +35,220 @@ for (let i = 0; i < listaTaskuri.length; i++) {
     console.log(listaTaskuri[i].nume);
 }
 
+
 // ============================================================
-// Sesiunea 4: JS DOM Manipulation (Task Tracker)
-// ============================================================
-// Cerințe Tehnice:
-// 1. Selectare elemente DOM: formular (#add-task-form), input (#task-name), tbody.
-// 2. Ascultător de eveniment 'submit' pe formular cu preventDefault().
-// 3. Creare dinamică rând nou (document.createElement('tr')).
-// 4. Structura rândului: celule <td> cu numele task-ului și buton cu clasa 'delete-row'.
-// 5. Inserare în DOM folosind appendChild() sau append().
-// 6. Resetare valoare câmp input (input.value = '').
-// 7. Ștergere dinamică din DOM cu .remove() la click pe butonul 'delete-row'.
+// SESIUNEA 6 - TASK TRACKER
 // ============================================================
 
-// 1. Selectare elemente DOM
+// 1. Selectarea elementelor HTML
+
+const form = document.querySelector('#add-task-form');
+const inputNode = document.querySelector('#task-name');
+const submitBtn = document.querySelector('#submit-task-btn');
+const errorMsg = document.querySelector('#error-msg');
+const taskList = document.querySelector('#task-list');
+const spinner = document.querySelector('#loading-spinner');
+
+const API_URL = 'https://jsonplaceholder.typicode.com/todos';
 
 
-// 2. Ascultător eveniment 'submit' și adăugare dinamică în tabel
+// 2. Desenarea unui task în DOM
+
+const deseneazaTaskInDOM = (id, titlu) => {
+    const li = document.createElement('li');
+
+    li.className = 'task-item';
+
+    li.innerHTML = `
+        <span class="task-title">${titlu}</span>
+        <button class="btn-delete"
+                data-testid="delete-btn-${id}">
+            Șterge
+        </button>
+    `;
+
+    taskList.appendChild(li);
+};
 
 
-// 3. Ștergere dinamică din DOM (Event Delegation pe document sau click pe buton)
+// 3. GET - Încărcarea celor 5 task-uri inițiale
 
+const incarcaDateServer = async () => {
+    try {
+        const response = await fetch(`${API_URL}?_limit=5`);
 
-const formular = document.querySelector('#add-task-form');
-const inputTask = document.querySelector('#task-name');
-const tabelTaskuri = document.querySelector('tbody');
+        if (!response.ok) {
+            throw new Error("Eroare la încărcarea task-urilor!");
+        }
 
-formular.addEventListener('submit', (event) => {
-    event.preventDefault();
+        const data = await response.json();
 
-    const textNou = inputTask.value;
+        spinner.style.display = 'none';
 
-    if (textNou !== "") {
-        const randNou = document.createElement('tr');
-
-        const celulaId = document.createElement('td');
-        celulaId.textContent = "1003";
-
-        const celulaNume = document.createElement('td');
-        celulaNume.textContent = textNou;
-
-        const celulaActiuni = document.createElement('td');
-
-        const butonStergere = document.createElement('button');
-        butonStergere.textContent = "Șterge";
-        butonStergere.className = "delete-row";
-
-        celulaActiuni.appendChild(butonStergere);
-
-        randNou.appendChild(celulaId);
-        randNou.appendChild(celulaNume);
-        randNou.appendChild(celulaActiuni);
-
-        tabelTaskuri.appendChild(randNou);
-
-        inputTask.value = "";
-
-        console.log("Task adăugat cu succes: " + textNou);
-
-
-        document.addEventListener('click', (e) => {
-            if (e.target.classList.contains('delete-row')) {
-                e.target.closest('tr').remove();
-            }
+        data.forEach(task => {
+            deseneazaTaskInDOM(task.id, task.title);
         });
 
-// ============================================================
-// Sesiunea 5: JS Asincron (Fetch API & Task-uri Active)
-// ============================================================
-// Cerințe Tehnice:
-// 1. Declară o Arrow Function asincronă:
-//    const incarcaTaskuriInitiale = async () => { ... };
-// 2. În interiorul funcției, apelează:
-//    const response = await fetch('https://jsonplaceholder.typicode.com/todos?_limit=5');
-// 3. Despachetează răspunsul: const taskuri = await response.json();
-// 4. Selectează lista din HTML: const activeTasksList = document.querySelector('#active-tasks-list');
-// 5. Iterează prin taskuri (cu forEach sau for):
-//    - Creează dinamic un element <li> (document.createElement('li')).
-//    - Setează textul cu titlul task-ului (li.textContent = task.title).
-//    - Adaugă elementul în listă (activeTasksList.appendChild(li)).
-// 6. Apelează funcția la finalul fișierului: incarcaTaskuriInitiale();
-// ============================================================
-
-// Adaugă aici funcția asincronă incarcaTaskuriInitiale și apelarea ei:
-
-
-const incarcaTaskuriInitiale = async () => {
-    const listaTaskuri = document.querySelector('#active-tasks-list');
-
-    const raspuns = await fetch('https://jsonplaceholder.typicode.com/todos?_limit=5');
-
-    const taskuri = await raspuns.json();
-
-    for (let i = 0; i < taskuri.length; i++) {
-        const liNou = document.createElement('li');
-
-        liNou.textContent = taskuri[i].title;
-
-        listaTaskuri.appendChild(liNou);
+    } catch (error) {
+        spinner.textContent = "Eroare la aducerea datelor!";
+        spinner.style.backgroundColor = "#f8d7da";
+        console.error(error);
     }
 };
 
-incarcaTaskuriInitiale();
+incarcaDateServer();
 
+
+// 4. Validarea formularului
+
+inputNode.addEventListener('input', () => {
+    if (inputNode.value.trim().length > 0) {
+        submitBtn.disabled = false;
+        errorMsg.style.display = 'none';
+    } else {
+        submitBtn.disabled = true;
+        errorMsg.style.display = 'block';
+    }
+});
+
+
+// 5. POST - Salvarea unui task nou
+
+form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const taskTitle = inputNode.value.trim();
+
+    if (taskTitle === '') {
+        errorMsg.style.display = 'block';
+        return;
+    }
+
+    // Senior Bonus: prevenirea task-urilor duplicate
+
+    const toateTaskurile = document.querySelectorAll('.task-title');
+
+    for (let i = 0; i < toateTaskurile.length; i++) {
+        if (toateTaskurile[i].textContent.toLowerCase() ===
+            taskTitle.toLowerCase()) {
+
+            alert("Acest task există deja!");
+            return;
+        }
+    }
+
+    submitBtn.textContent = "Se salvează...";
+    submitBtn.disabled = true;
+
+    try {
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                title: taskTitle,
+                completed: false,
+                userId: 1
+            })
+        });
+
+        if (response.status === 201) {
+            const newTask = await response.json();
+
+            deseneazaTaskInDOM(newTask.id, newTask.title);
+
+            inputNode.value = '';
+            errorMsg.style.display = 'none';
+        }
+
+    } catch (error) {
+        alert("Eroare la salvarea pe rețea!");
+
+    } finally {
+        submitBtn.textContent = "Salveaza Task";
+        submitBtn.disabled = true;
+    }
+});
+
+
+// 6. Marcarea task-urilor ca finalizate
+
+taskList.addEventListener('click', (e) => {
+    if (e.target.classList.contains('task-title')) {
+        e.target.classList.toggle('completed');
+    }
+});
+
+
+// 7. DELETE - Ștergerea task-urilor de pe server
+
+taskList.addEventListener('click', async (e) => {
+    if (e.target.classList.contains('btn-delete')) {
+
+        const deleteBtn = e.target;
+        const randTask = deleteBtn.closest('.task-item');
+
+        const testId = deleteBtn.getAttribute('data-testid');
+        const taskId = testId.split('-')[2];
+
+        deleteBtn.textContent = 'Se șterge...';
+        deleteBtn.disabled = true;
+        randTask.style.opacity = '0.6';
+
+        try {
+            const response = await fetch(`${API_URL}/${taskId}`, {
+                method: 'DELETE'
+            });
+
+            if (response.ok) {
+                randTask.remove();
+            } else {
+                throw new Error("Serverul a refuzat ștergerea!");
+            }
+
+        } catch (error) {
+            alert("Eroare de rețea la ștergere!");
+
+            deleteBtn.textContent = 'Șterge';
+            deleteBtn.disabled = false;
+            randTask.style.opacity = '1';
+        }
+    }
+});
+
+
+// 8. CHAOS MODE - Pop-up promoțional
+
+const initChaosMode = () => {
+    const randomDelay = Math.floor(Math.random() * 4000) + 2000;
+
+    setTimeout(() => {
+        const modal = document.createElement('div');
+
+        modal.className = 'overlay-modal';
+        modal.setAttribute('data-testid', 'promo-overlay');
+
+        modal.innerHTML = `
+            <div class="promo-box">
+                <h3>Ofertă Specială!</h3>
+                <p>Fă upgrade la versiunea Premium!</p>
+                <button class="btn-close-promo"
+                        data-testid="close-promo-btn">
+                    Nu, mulțumesc
+                </button>
+            </div>
+        `;
+
+        const closeBtn = modal.querySelector('.btn-close-promo');
+
+        closeBtn.addEventListener('click', () => {
+            modal.remove();
+        });
+
+        document.body.appendChild(modal);
+
+    }, randomDelay);
+};
+
+initChaosMode();
